@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc     
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd     
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="org.mnr.spring, org.mnr.model, org.mnr.dao, org.mnr.service" />
+	<!-- Above will scan the mentioned packages and automatically create singleton 
+		beans. Also scans the controllers and other beans automatically and creates 
+		references. By default spring container will create beans with having reference 
+		var same as class name exept first letter which will be lower case To override 
+		this, we need to use @ModelAttribute("customReferenceName") where a particular 
+		bean is being used -->
+	
+	<mvc:annotation-driven /> <!-- This must be added inorder to make all spring annotations(validations) work -->
+	
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/jsp/" />
+			<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<!-- <property name="url" value="jdbc:oracle:thin:@10.1.60.121:1525:cwaic2"/>
+			<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+			<property name="username" value="ICICI_DEV_12C"/>
+			<property name="password" value="ICICI_DEV_12C"/> -->
+			<!-- below properties are injected using properties file -->
+			
+			<property name="url" value="${url}"/>
+			<property name="driverClassName" value="${driverClassName}"/><!-- driverClassName in the value represents key of a property in a properties file. This key name can be any name. -->
+			<property name="username" value="${username}"/>
+			<property name="password" value="${password}"/>
+	</bean>
+	
+	<!-- following bean is used for loading the application properties
+		 It is spring specific bean -->
+		 
+		 <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		 		<property name="locations">
+			 		 <list>
+			 		 	<value>/WEB-INF/Application.properties</value><!--File extension must be provided -->
+			 		 	<value>/WEB-INF/Application1.properties</value>
+			 		 </list>
+		 		</property>
+		 </bean>
+		 
+   <!-- following bean is used for custom validation messages -->
+	
+		<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		       <property name="basename" value="/WEB-INF/resource1"/><!-- here file extension shouldn't be provided-->		
+		</bean>
+		
+	  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+			<property name="maxUploadSize" value="5000000" />
+	  </bean>
+	  
+	  <mvc:resources mapping="/resources/**" location="/resources/" />
+</beans>
+    
+    
+    
